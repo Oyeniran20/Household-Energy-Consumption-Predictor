@@ -123,9 +123,10 @@ def main():
             st.success(f"⚡ Predicted Energy Consumption: **{prediction:.2f} watts**")
 
         # Reset button
-        if st.button("🔄 Reset Inputs", key="reset_button"):
-            st.session_state.clear()
-            st.experimental_rerun()
+        if st.button("🔄 Reset Inputs"):
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            st.rerun()  
 
     with tab2:
         st.write("### ℹ️ About This App")
