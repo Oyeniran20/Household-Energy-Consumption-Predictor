@@ -53,7 +53,7 @@ def predict(model, input_transformed):
 # Streamlit app
 def main():
     # Add an image banner
-    st.image("energy_banner.jpg", use_column_width=True)
+    st.image("energy_banner.jpg", use_container_width=True)
 
     # Title & Description
     st.title("⚡ Household Energy Consumption Predictor")
@@ -120,7 +120,8 @@ def main():
         st.success(f"⚡ Predicted Energy Consumption: **{prediction:.2f} watts**")
 
     # Reset Button
-    if st.button("🔄 Reset Inputs"):
+    if st.button("🔄 Reset Inputs", key="reset_button"):
+        st.session_state.clear()
         st.experimental_rerun()
 
 # Run the app
