@@ -1,4 +1,3 @@
-# Import necessary libraries
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -55,74 +54,91 @@ def main():
     # Add an image banner
     st.image("energy_banner.jpg", use_container_width=True)
 
-    # Title & Description
-    st.title("⚡ Household Energy Consumption Predictor")
-    st.markdown(
-        """
-        **Predict the energy consumption of household appliances**  
-        based on environmental and indoor conditions.  
-        """
-    )
+    # Tabs for navigation
+    tab1, tab2 = st.tabs(["📊 Prediction", "ℹ️ About"])
 
-    # Load model and preprocessor
-    model, preprocessor = load_artifacts()
+    with tab1:
+        st.title("⚡ Household Energy Consumption Predictor")
+        st.markdown(
+            """
+            **Predict the energy consumption of household appliances**  
+            based on environmental and indoor conditions.  
+            """
+        )
 
-    # Create input fields using columns
-    st.sidebar.header("🔧 Input Features")
+        # Load model and preprocessor
+        model, preprocessor = load_artifacts()
 
-    # Organize inputs in two columns
-    col1, col2 = st.columns(2)
+        # Sidebar with input fields
+        st.sidebar.header("🔧 Input Features")
+        st.sidebar.divider()
 
-    with col1:
-        t_out = st.number_input("🌡️ Outdoor Temperature (°C)", value=10.0)
-        press_mm_hg = st.number_input("🌬️ Atmospheric Pressure (mmHg)", value=760.0)
-        rh_out = st.number_input("💦 Outdoor Humidity (%)", value=50.0)
-        windspeed = st.number_input("🌪️ Wind Speed (m/s)", value=5.0)
-        visibility = st.number_input("👀 Visibility (km)", value=10.0)
+        # Organize inputs in two columns
+        col1, col2 = st.columns(2)
 
-    with col2:
-        tdewpoint = st.number_input("❄️ Dew Point Temperature (°C)", value=5.0)
-        avg_temp = st.number_input("🏠 Indoor Temperature (°C)", value=20.0)
-        avg_humidity = st.number_input("🏡 Indoor Humidity (%)", value=50.0)
-        hour = st.slider("⏰ Hour of the Day", 0, 23, 12)
-        is_weekend = st.selectbox("📅 Is it a weekend?", ["No", "Yes"])
+        with col1:
+            t_out = st.number_input("🌡️ Outdoor Temperature (°C)", value=10.0)
+            press_mm_hg = st.number_input("🌬️ Atmospheric Pressure (mmHg)", value=760.0)
+            rh_out = st.number_input("💦 Outdoor Humidity (%)", value=50.0)
+            windspeed = st.number_input("🌪️ Wind Speed (m/s)", value=5.0)
+            visibility = st.number_input("👀 Visibility (km)", value=10.0)
 
-    # Categorical features
-    day_of_week = st.selectbox("📆 Day of the Week", ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"])
-    season = st.selectbox("🌍 Season", ["Winter", "Spring", "Summer", "Fall"])
-    month = st.slider("🗓️ Month", 1, 12, 6)  
-    lights = st.number_input("💡 Lights Consumption (watts)", value=0.0)
+        with col2:
+            tdewpoint = st.number_input("❄️ Dew Point Temperature (°C)", value=5.0)
+            avg_temp = st.number_input("🏠 Indoor Temperature (°C)", value=20.0)
+            avg_humidity = st.number_input("🏡 Indoor Humidity (%)", value=50.0)
+            hour = st.slider("⏰ Hour of the Day", 0, 23, 12)
+            is_weekend = st.selectbox("📅 Is it a weekend?", ["No", "Yes"])
 
-    # Prepare input data
-    input_data = {
-        'lights': lights,
-        't_out': t_out,
-        'press_mm_hg': press_mm_hg,
-        'rh_out': rh_out,
-        'windspeed': windspeed,
-        'visibility': visibility,
-        'tdewpoint': tdewpoint,
-        'hour': hour,
-        'day_of_week': day_of_week,
-        'month': month,
-        'is_weekend': 1 if is_weekend == "Yes" else 0,
-        'season': season,
-        'avg_temp': avg_temp,
-        'avg_humidity': avg_humidity
-    }
+        # Categorical features
+        day_of_week = st.selectbox("📆 Day of the Week", ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"])
+        season = st.selectbox("🌍 Season", ["Winter", "Spring", "Summer", "Fall"])
+        month = st.slider("🗓️ Month", 1, 12, 6)  
+        lights = st.number_input("💡 Lights Consumption (watts)", value=0.0)
 
-    # Preprocess input data
-    input_transformed = preprocess_input(input_data, preprocessor)
+        # Prepare input data
+        input_data = {
+            'lights': lights,
+            't_out': t_out,
+            'press_mm_hg': press_mm_hg,
+            'rh_out': rh_out,
+            'windspeed': windspeed,
+            'visibility': visibility,
+            'tdewpoint': tdewpoint,
+            'hour': hour,
+            'day_of_week': day_of_week,
+            'month': month,
+            'is_weekend': 1 if is_weekend == "Yes" else 0,
+            'season': season,
+            'avg_temp': avg_temp,
+            'avg_humidity': avg_humidity
+        }
 
-    # Predict Button & Result
-    if st.button("🚀 Predict Energy Consumption"):
-        prediction = predict(model, input_transformed)
-        st.success(f"⚡ Predicted Energy Consumption: **{prediction:.2f} watts**")
+        # Preprocess input data
+        input_transformed = preprocess_input(input_data, preprocessor)
 
-    # Reset Button
-    if st.button("🔄 Reset Inputs", key="reset_button"):
-        st.session_state.clear()
-        st.experimental_rerun()
+        # Prediction button
+        if st.button("🚀 Predict Energy Consumption"):
+            prediction = predict(model, input_transformed)
+            st.success(f"⚡ Predicted Energy Consumption: **{prediction:.2f} watts**")
+
+        # Reset button
+        if st.button("🔄 Reset Inputs", key="reset_button"):
+            st.session_state.clear()
+            st.experimental_rerun()
+
+    with tab2:
+        st.write("### ℹ️ About This App")
+        st.write("This app predicts household energy consumption using machine learning.")
+
+        with st.expander("💡 How does this work?"):
+            st.write(
+                """
+                - Enter environmental and household conditions.
+                - Click the **Predict** button.
+                - The model estimates energy consumption based on historical data.
+                """
+            )
 
 # Run the app
 if __name__ == '__main__':
